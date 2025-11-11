@@ -1,13 +1,13 @@
-# semantic_search.py — Improved version with similarity conversion
+# semantic_search.py — Improved with better text chunking and display
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import numpy as np
 
 
-def build_semantic_index(pdf_text: str, chunk_size: int = 500, chunk_overlap: int = 100):
+def build_semantic_index(pdf_text: str, chunk_size: int = 300, chunk_overlap: int = 50):
     """
-    Build a FAISS semantic index from PDF text with smaller chunks for better precision.
+    Build a FAISS semantic index with smaller, more readable chunks.
     Returns the vectordb for searching.
     """
     try:
@@ -18,18 +18,21 @@ def build_semantic_index(pdf_text: str, chunk_size: int = 500, chunk_overlap: in
         embed_model = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
         print("✅ Embedding model loaded")
         
-        # Split text into smaller chunks for better granularity
+        # Split text with better separators for resumes/papers
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
             length_function=len,
-            separators=["\n\n", "\n", ". ", " ", ""]
+            separators=["\n\n", "\n", ". ", ", ", " ", ""]  # Better separation
         )
         texts = text_splitter.split_text(pdf_text)
         
+        # Clean up chunks - remove excessive whitespace
+        texts = [' '.join(text.split()) for text in texts if text.strip()]
+        
         print(f"✂️ Split into {len(texts)} chunks")
         if texts:
-            print(f"🔍 First chunk preview: {texts[0][:100]}...")
+            print(f"🔍 Sample chunk: {texts[0][:100]}...")
         
         if not texts:
             raise ValueError("No text chunks created from PDF")
@@ -47,8 +50,7 @@ def build_semantic_index(pdf_text: str, chunk_size: int = 500, chunk_overlap: in
 
 def search_semantic(vectordb, query: str, k: int = 10):
     """
-    Perform semantic search on the FAISS index.
-    Converts FAISS distances to similarity scores (0-1 range, higher = better).
+    Perform semantic search with better formatting.
     Returns results as [(text, similarity_score), ...]
     """
     try:
@@ -58,7 +60,7 @@ def search_semantic(vectordb, query: str, k: int = 10):
             print("⚠️ Empty query provided")
             return []
         
-        # Perform similarity search with scores (these are L2 distances)
+        # Perform similarity search with scores
         results = vectordb.similarity_search_with_score(query, k=k)
         print(f"📊 FAISS returned {len(results)} results")
         
@@ -66,22 +68,19 @@ def search_semantic(vectordb, query: str, k: int = 10):
             print("⚠️ No results from FAISS")
             return []
         
-        # Extract distances and convert to similarity scores
-        distances = [score for _, score in results]
-        print(f"📏 Distance range: min={min(distances):.4f}, max={max(distances):.4f}")
-        
-        # Convert distances to similarity scores
-        # For L2 distance, we use: similarity = 1 / (1 + distance)
-        # This gives: 0 distance = 1.0 similarity, large distance = ~0 similarity
+        # Convert to similarity scores and format
         formatted_results = []
         for i, (doc, distance) in enumerate(results):
             # Convert distance to similarity (0-1 range)
             similarity = 1 / (1 + distance)
             
-            print(f"   Result {i+1}: distance={distance:.4f}, similarity={similarity:.4f}, text_len={len(doc.page_content)}")
-            formatted_results.append((doc.page_content, similarity))
+            # Clean the text - remove extra whitespace
+            clean_text = ' '.join(doc.page_content.split())
+            
+            print(f"   Result {i+1}: distance={distance:.4f}, similarity={similarity:.4f}")
+            formatted_results.append((clean_text, similarity))
         
-        # Sort by similarity (highest first) - though FAISS already returns sorted by distance
+        # Sort by similarity (highest first)
         formatted_results.sort(key=lambda x: x[1], reverse=True)
         
         print(f"✅ Returning {len(formatted_results)} results")
@@ -97,21 +96,8 @@ def search_semantic(vectordb, query: str, k: int = 10):
 def search_semantic_with_threshold(vectordb, query: str, k: int = 10, min_similarity: float = 0.3):
     """
     Perform semantic search with a minimum similarity threshold.
-    Only returns results above the threshold.
-    
-    Args:
-        vectordb: FAISS vector database
-        query: Search query
-        k: Maximum number of results to retrieve
-        min_similarity: Minimum similarity score (0-1, default 0.3)
-    
-    Returns:
-        List of (text, similarity_score) tuples above threshold
     """
-    # Get all results first
     all_results = search_semantic(vectordb, query, k=k)
-    
-    # Filter by threshold
     filtered_results = [(text, score) for text, score in all_results if score >= min_similarity]
     
     print(f"🔍 Filtered: {len(filtered_results)}/{len(all_results)} results above similarity {min_similarity}")

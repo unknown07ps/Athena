@@ -1,21 +1,30 @@
-# chat_engine.py - Conversational AI with Memory for Athena
+# chat_engine.py - Context-aware conversational AI for Athena
 
 import requests
 from datetime import datetime
 
 
 class AthenaChat:
-    """Conversational AI with memory for research discussions"""
+    """Conversational AI with memory and PDF context awareness"""
     
     def __init__(self, model="llama3", temperature=0.3):
         self.model = model
         self.temperature = temperature
         self.chat_history = []
         self.ollama_url = "http://localhost:11434/api/generate"
+        self.pdf_context = None  # Store PDF content for context
     
-    def chat(self, user_message):
+    def set_pdf_context(self, pdf_text: str):
         """
-        Send a message and get a response with conversation context
+        Set the PDF context for the chat session.
+        This allows Athena to answer questions based on the uploaded document.
+        """
+        self.pdf_context = pdf_text
+        print(f"✅ PDF context set ({len(pdf_text)} characters)")
+    
+    def chat(self, user_message: str):
+        """
+        Send a message and get a response with conversation and PDF context
         
         Args:
             user_message: User's message
@@ -27,8 +36,22 @@ class AthenaChat:
             # Build conversation context
             context = self._build_context()
             
-            # Create prompt with history
-            prompt = f"""You are Athena, an AI research assistant. You're knowledgeable, helpful, and professional.
+            # Create prompt with history and PDF context
+            if self.pdf_context:
+                prompt = f"""You are Athena, an AI research assistant. You have access to the user's uploaded document.
+
+IMPORTANT: When answering questions about the document, ONLY use information from the DOCUMENT CONTENT below. 
+Do NOT make up or hallucinate information. If the document doesn't contain the answer, say so clearly.
+
+DOCUMENT CONTENT:
+{self.pdf_context[:3000]}
+
+{context}
+
+User: {user_message}
+Athena:"""
+            else:
+                prompt = f"""You are Athena, an AI research assistant. You're knowledgeable, helpful, and professional.
 
 {context}
 
@@ -64,7 +87,9 @@ Athena:"""
             return assistant_message
             
         except requests.exceptions.ConnectionError:
-            return "❌ Could not connect to Ollama. Make sure it's running."
+            return "❌ Could not connect to Ollama. Make sure it's running: `ollama serve`"
+        except requests.exceptions.Timeout:
+            return "❌ Request timed out. The model is taking too long to respond."
         except Exception as e:
             return f"❌ Error: {str(e)}"
     
@@ -73,8 +98,8 @@ Athena:"""
         if not self.chat_history:
             return "This is the start of the conversation."
         
-        # Include last 5 exchanges
-        recent = self.chat_history[-5:]
+        # Include last 3 exchanges to keep context manageable
+        recent = self.chat_history[-3:]
         context_lines = ["Previous conversation:"]
         
         for exchange in recent:
@@ -86,6 +111,10 @@ Athena:"""
     def clear_history(self):
         """Clear conversation history"""
         self.chat_history = []
+    
+    def clear_pdf_context(self):
+        """Clear PDF context"""
+        self.pdf_context = None
     
     def get_history(self):
         """Get full conversation history"""
@@ -109,15 +138,38 @@ Athena:"""
 
 # Test function
 if __name__ == "__main__":
-    print("🧠 Testing Athena Chat Engine\n")
+    print("🧠 Testing Athena Chat Engine with PDF Context\n")
     
     chat = AthenaChat()
     
+    # Simulate PDF context
+    sample_pdf = """
+    SAGAR PRAJAPATI
+    Email: sagar@example.com
+    
+    EXPERIENCE:
+    AI Research Intern at COEP (May 2025 - Aug 2025)
+    - Worked on computer vision projects
+    - Developed CNN-based exam proctoring system
+    
+    EDUCATION:
+    B.Tech Computer Engineering, COEP
+    
+    SKILLS:
+    Python, Java, Machine Learning, Deep Learning
+    
+    ACHIEVEMENTS:
+    - Solved 540+ DSA problems on GeeksforGeeks
+    - Rank 234 on GeeksforGeeks
+    """
+    
+    chat.set_pdf_context(sample_pdf)
+    
     # Test conversation
     test_messages = [
-        "Hello! Can you explain what transformers are in AI?",
-        "What are some applications of transformers?",
-        "Which is better - CNN or Transformer for image tasks?"
+        "What work experience does this candidate have?",
+        "How many DSA problems have they solved?",
+        "What are their technical skills?"
     ]
     
     for msg in test_messages:
@@ -125,12 +177,3 @@ if __name__ == "__main__":
         response = chat.chat(msg)
         print(f"Athena: {response}\n")
         print("-" * 60 + "\n")
-    
-    # Show history
-    print("\n📝 Chat History:")
-    history = chat.get_history()
-    print(f"Total exchanges: {len(history)}")
-    
-    # Export
-    filename = chat.export_history()
-    print(f"\n✅ Exported to: {filename}")
