@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------- Custom CSS ----------
+# ---------- Custom CSS with Enhanced Text Visibility ----------
 st.markdown("""
 <style>
 body {
@@ -47,22 +47,69 @@ h1, h2, h3 {
     background-color: white;
     padding: 1.5rem;
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.08);
-    line-height: 1.7;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    line-height: 1.8;
+    color: #1f2937;
+    font-size: 1.05rem;
+    border: 1px solid #e5e7eb;
 }
 .answer-box {
     background-color: #eff6ff;
     padding: 1.5rem;
     border-radius: 12px;
     border-left: 4px solid #3b82f6;
-    line-height: 1.7;
+    line-height: 1.8;
+    color: #1e40af;
+    font-size: 1.05rem;
+    border: 1px solid #bfdbfe;
 }
 .comparison-box {
     background-color: #f0fdf4;
     padding: 1.5rem;
     border-radius: 12px;
     border-left: 4px solid #22c55e;
-    line-height: 1.7;
+    line-height: 1.8;
+    color: #065f46;
+    font-size: 1.05rem;
+    font-weight: 500;
+    border: 1px solid #bbf7d0;
+}
+.section-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.comparison-section {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.comparison-section h4 {
+    color: #1e3a8a;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+.comparison-content {
+    color: #374151;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+.info-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -168,10 +215,17 @@ if st.session_state.pdf_uploaded and st.session_state.last_result:
         "📊 Document Comparison"
     ])
 
-    # ---------- Summary TAB ----------
+    # ---------- Summary TAB (Enhanced) ----------
     with tab1:
-        st.markdown("### 📋 Research Summary")
-        st.markdown(f"<div class='result-box'>{st.session_state.last_result}</div>", unsafe_allow_html=True)
+        st.markdown("<div class='section-header'>📋 Research Summary</div>", unsafe_allow_html=True)
+        
+        # Display summary with better formatting
+        summary_html = f"""
+        <div class='result-box'>
+            {st.session_state.last_result.replace(chr(10), '<br>')}
+        </div>
+        """
+        st.markdown(summary_html, unsafe_allow_html=True)
 
         st.download_button(
             label="💾 Download Summary",
@@ -247,7 +301,7 @@ if st.session_state.pdf_uploaded and st.session_state.last_result:
             if not query.strip():
                 st.warning("Please enter a search query.")
             else:
-                with st.spinner("🔍 Performing semantic search..."):
+                with st.spinner("🔎 Performing semantic search..."):
                     try:
                         results = search_semantic(
                             st.session_state.semantic_index, 
@@ -367,12 +421,12 @@ if st.session_state.pdf_uploaded and st.session_state.last_result:
             st.markdown("---")
             st.caption(f"💬 {len(st.session_state.chat_messages)} exchanges in this conversation")
 
-    # ---------- DOCUMENT COMPARISON TAB ----------
+    # ---------- DOCUMENT COMPARISON TAB (Enhanced) ----------
     with tab5:
-        st.markdown("### 📊 Document Comparison")
-        st.info("💡 Upload multiple PDFs to compare them side-by-side and find similarities/differences!")
+        st.markdown("<div class='section-header'>📊 Document Comparison</div>", unsafe_allow_html=True)
+        st.markdown("<div class='info-card'>💡 Upload multiple PDFs to compare them side-by-side and find similarities/differences!</div>", unsafe_allow_html=True)
         
-        st.markdown("#### 📎 Upload Documents to Compare")
+        st.markdown("#### 🔎 Upload Documents to Compare")
         
         col1, col2 = st.columns(2)
         
@@ -402,8 +456,8 @@ if st.session_state.pdf_uploaded and st.session_state.last_result:
                         
                         st.success("✅ Documents loaded successfully!")
                         
-                        # Perform comparison
-                        with st.spinner("🔬 Comparing documents..."):
+                        # Perform comparison with progress message
+                        with st.spinner("🔬 Comparing documents... This may take 30-60 seconds if using AI analysis"):
                             comparison_result = st.session_state.doc_comparison.compare_documents(
                                 doc1_file.name,
                                 doc2_file.name
@@ -416,32 +470,53 @@ if st.session_state.pdf_uploaded and st.session_state.last_result:
                         import traceback
                         st.code(traceback.format_exc())
         
-        # Display comparison results
+        # Display comparison results with enhanced visibility
         if "comparison_result" in st.session_state and st.session_state.comparison_result:
             st.markdown("---")
-            st.markdown("### 📈 Comparison Results")
+            st.markdown("<div class='section-header'>📈 Comparison Results</div>", unsafe_allow_html=True)
             
             result = st.session_state.comparison_result
             
-            # Summary
-            st.markdown("#### 📝 Summary")
-            st.markdown(f"<div class='comparison-box'>{result['summary']}</div>", unsafe_allow_html=True)
+            # Summary with better styling
+            st.markdown("""
+            <div class='comparison-section'>
+                <h4>📝 Summary</h4>
+                <div class='comparison-content'>
+                    {}
+                </div>
+            </div>
+            """.format(result['summary']), unsafe_allow_html=True)
             
             # Similarities
-            st.markdown("#### 🤝 Similarities")
-            with st.expander("View Common Topics", expanded=True):
-                st.markdown(f"<div class='result-box'>{result['similarities']}</div>", unsafe_allow_html=True)
+            st.markdown("""
+            <div class='comparison-section'>
+                <h4>🤝 Similarities</h4>
+                <div class='comparison-content'>
+                    {}
+                </div>
+            </div>
+            """.format(result['similarities']), unsafe_allow_html=True)
             
             # Differences
-            st.markdown("#### ⚡ Key Differences")
-            with st.expander("View Unique Aspects", expanded=True):
-                st.markdown(f"<div class='result-box'>{result['differences']}</div>", unsafe_allow_html=True)
+            st.markdown("""
+            <div class='comparison-section'>
+                <h4>⚡ Key Differences</h4>
+                <div class='comparison-content'>
+                    {}
+                </div>
+            </div>
+            """.format(result['differences']), unsafe_allow_html=True)
             
             # Recommendations
             if result.get('recommendations'):
-                st.markdown("#### 💡 Recommendations")
-                with st.expander("View Insights"):
-                    st.markdown(f"<div class='result-box'>{result['recommendations']}</div>", unsafe_allow_html=True)
+                st.markdown("""
+                <div class='comparison-section'>
+                    <h4>💡 Recommendations</h4>
+                    <div class='comparison-content'>
+                        {}
+                    </div>
+                </div>
+                """.format(result['recommendations']), unsafe_allow_html=True)
             
             # Download comparison report
             st.markdown("---")
