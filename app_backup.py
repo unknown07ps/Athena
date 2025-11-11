@@ -4,8 +4,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from main import research_topic
 from qa_engine import make_qa_chain
 from semantic_search import build_semantic_index, search_semantic
-from pdf_utils import extract_text_from_pdf
-from chat_engine import AthenaChat  # ✅ NEW IMPORT
+from pdf_utils import extract_text_from_pdf  # ✅ NEW IMPORT
 
 # ---------- Page setup ----------
 st.set_page_config(
@@ -56,19 +55,12 @@ st.title("🧠 Athena")
 st.markdown("### _Local AI Research Assistant powered by Ollama_")
 st.markdown("---")
 
-# ---------- Initialize Chat Engine (NEW) ----------
-if "athena_chat" not in st.session_state:
-    st.session_state.athena_chat = AthenaChat(model="llama3", temperature=0.3)
-
-if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = []
-
 # ---------- Input section ----------
 st.markdown("### 📄 Upload a research paper (PDF) or enter a topic")
 uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
 
 topic = st.text_input(
-    "🔎 Research Topic",
+    "🔍 Research Topic",
     placeholder="e.g. Recent advances in computer vision"
 )
 
@@ -127,13 +119,8 @@ if st.button("✨ Research", key="research_button"):
         # Store result
         st.session_state.last_result = result
 
-        # --- Tabs Layout (UPDATED WITH CHAT TAB) ---
-        tab1, tab2, tab3, tab4 = st.tabs([
-            "📄 Summary", 
-            "💬 Q&A", 
-            "🔍 Semantic Search",
-            "🤖 Chat with Athena"  # ✅ NEW TAB
-        ])
+        # --- Tabs Layout ---
+        tab1, tab2, tab3 = st.tabs(["📄 Summary", "💬 Q&A", "🔍 Semantic Search"])
 
         # ---------- Summary TAB ----------
         with tab1:
@@ -209,17 +196,8 @@ if st.button("✨ Research", key="research_button"):
                             st.stop()
 
                 # Search Interface
-                col1, col2 = st.columns([3, 1])
-                
-                with col1:
-                    query = st.text_input(
-                        "Enter your semantic search query:", 
-                        key="semantic_input", 
-                        placeholder="e.g. methodology used in the study"
-                    )
-                
-                with col2:
-                    num_results = st.selectbox("Results", [5, 10, 15, 20], index=0, key="num_results")
+                query = st.text_input("Enter your semantic search query:", key="semantic_input", 
+                                    placeholder="e.g. methodology used in the study")
 
                 if st.button("Search", key="semantic_button"):
                     if not query.strip():
@@ -227,11 +205,7 @@ if st.button("✨ Research", key="research_button"):
                     else:
                         with st.spinner("🔍 Performing semantic search..."):
                             try:
-                                results = search_semantic(
-                                    st.session_state.semantic_index, 
-                                    query, 
-                                    k=num_results
-                                )
+                                results = search_semantic(st.session_state.semantic_index, query, k=5)
                                 
                                 if not results:
                                     st.warning("😶 No relevant matches found.")
@@ -244,124 +218,10 @@ if st.button("✨ Research", key="research_button"):
                 # Display persistent results
                 if "semantic_results" in st.session_state and st.session_state.semantic_results:
                     st.markdown("### 🧩 Semantic Matches:")
-                    
-                    # Add a filter option
-                    min_similarity = st.slider(
-                        "Minimum Similarity Score", 
-                        min_value=0.0, 
-                        max_value=1.0, 
-                        value=0.3, 
-                        step=0.05,
-                        help="Filter results by minimum similarity (higher = more relevant)"
-                    )
-                    
-                    # Filter results
-                    filtered_results = [
-                        (text, score) for text, score in st.session_state.semantic_results 
-                        if score >= min_similarity
-                    ]
-                    
-                    if not filtered_results:
-                        st.warning(f"No results above similarity threshold {min_similarity:.2f}")
-                    else:
-                        st.info(f"Showing {len(filtered_results)} results above {min_similarity:.2f} similarity")
-                        
-                        for i, (text, similarity) in enumerate(filtered_results, 1):
-                            # Color code by similarity
-                            if similarity >= 0.7:
-                                color = "🟢"  # High relevance
-                            elif similarity >= 0.5:
-                                color = "🟡"  # Medium relevance
-                            else:
-                                color = "🟠"  # Lower relevance
-                            
-                            st.markdown(f"{color} **Match {i} - Similarity: {similarity:.2%}**")
-                            st.markdown(f"<div class='result-box'>{text}</div>", unsafe_allow_html=True)
-                            st.markdown("---")
-
-        # ---------- CHAT TAB (NEW) ----------
-        with tab4:
-            st.markdown("### 🤖 Chat with Athena")
-            st.markdown("Have a natural conversation about research topics. Athena remembers the context!")
-            
-            # Chat controls
-            col1, col2, col3 = st.columns([2, 1, 1])
-            
-            with col2:
-                if st.button("🗑️ Clear Chat", key="clear_chat"):
-                    st.session_state.athena_chat.clear_history()
-                    st.session_state.chat_messages = []
-                    st.success("Chat cleared!")
-                    st.rerun()
-            
-            with col3:
-                if st.button("💾 Export Chat", key="export_chat"):
-                    if st.session_state.chat_messages:
-                        filename = st.session_state.athena_chat.export_history()
-                        with open(filename, 'r', encoding='utf-8') as f:
-                            chat_text = f.read()
-                        
-                        st.download_button(
-                            label="📥 Download",
-                            data=chat_text,
-                            file_name=filename,
-                            mime="text/plain"
-                        )
-                    else:
-                        st.warning("No chat history to export")
-            
-            # Display chat history
-            st.markdown("---")
-            
-            # Chat messages container
-            chat_container = st.container()
-            
-            with chat_container:
-                if not st.session_state.chat_messages:
-                    st.info("👋 Start a conversation! Ask me anything about research, papers, or AI.")
-                else:
-                    for msg in st.session_state.chat_messages:
-                        # User message
-                        with st.chat_message("user"):
-                            st.markdown(msg["user"])
-                        
-                        # Assistant message
-                        with st.chat_message("assistant", avatar="🧠"):
-                            st.markdown(msg["assistant"])
-            
-            # Chat input
-            st.markdown("---")
-            user_input = st.text_input(
-                "Your message:",
-                key="chat_input",
-                placeholder="e.g., Explain the attention mechanism in transformers"
-            )
-            
-            col1, col2 = st.columns([1, 5])
-            
-            with col1:
-                send_button = st.button("Send 📤", key="send_chat")
-            
-            if send_button and user_input.strip():
-                with st.spinner("Athena is thinking..."):
-                    # Get response
-                    response = st.session_state.athena_chat.chat(user_input)
-                    
-                    # Add to display messages
-                    st.session_state.chat_messages.append({
-                        "user": user_input,
-                        "assistant": response
-                    })
-                    
-                    # Rerun to show new messages
-                    st.rerun()
-            elif send_button:
-                st.warning("Please enter a message")
-            
-            # Show stats
-            if st.session_state.chat_messages:
-                st.markdown("---")
-                st.caption(f"💬 {len(st.session_state.chat_messages)} exchanges in this conversation")
+                    for i, (text, score) in enumerate(st.session_state.semantic_results, 1):
+                        st.markdown(f"**Match {i} (Similarity: {score:.4f})**")
+                        st.markdown(f"<div class='result-box'>{text}</div>", unsafe_allow_html=True)
+                        st.markdown("---")
 
 
 # ---------- Footer ----------
