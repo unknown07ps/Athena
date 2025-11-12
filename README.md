@@ -431,6 +431,450 @@ Having issues? Here's how to get help:
 | Deep discussion | Chat | Start conversation |
 | Save results | Any mode | Use download buttons |
 
+# 📝 README Updates - Knowledge Graph + Advanced RAG
+
+**Add this section to your main README.md after the existing features section**
+
+---
+
+## 🆕 Advanced Features (NEW!)
+
+### 🕸️ Knowledge Graph Construction
+
+**What it does:** Automatically extracts and visualizes entities, relationships, and key concepts from research papers
+
+**Features:**
+- 🔍 **Entity Extraction**: Methods, datasets, models, metrics, results
+- 🔗 **Relationship Mapping**: Uses, improves, based-on, evaluates-on
+- 🎨 **Interactive Visualization**: Drag, hover, zoom, explore
+- 📊 **Graph Analysis**: Query, path-finding, subgraph extraction
+- 💾 **Export**: JSON, GraphML for external tools (Gephi, Neo4j)
+
+**Best for:**
+- Understanding paper structure at a glance
+- Finding connections between concepts
+- Identifying key contributions
+- Preparing presentations
+- Visual literature reviews
+
+**Example:**
+```
+Input: Research paper on transformers
+Output: Interactive graph showing:
+  🔴 Paper → 🔵 Transformer → 🟡 WMT 2014 → 🟢 28.4 BLEU
+              ↓
+            🟣 Self-attention
+```
+
+---
+
+### 📚 Advanced Multi-Document RAG
+
+**What it does:** Reason across multiple research papers with source attribution and confidence scoring
+
+**Features:**
+- 🔍 **Multi-Document Q&A**: Ask questions across all loaded papers
+- 📌 **Source Attribution**: Every answer cites specific documents
+- 📊 **Confidence Scoring**: 0-100% reliability indicator
+- 🔬 **Cross-Document Comparison**: Compare approaches, methods, results
+- 🔗 **Concept Tracking**: Trace ideas across multiple papers
+- 🎯 **Document Filtering**: Query specific papers or all
+
+**Best for:**
+- Literature reviews
+- Comparing multiple approaches
+- Tracking research evolution
+- Finding consensus across papers
+- Identifying research gaps
+
+**Example:**
+```
+Query: "How do these papers approach attention?"
+
+Answer [Confidence: 92%]:
+[Source 1 - Transformer] Self-attention mechanism for sequences
+[Source 2 - BERT] Bidirectional attention with masking
+[Source 3 - GPT-3] Autoregressive attention
+
+Sources:
+  [1] attention_is_all_you_need.pdf (94% similarity)
+  [2] bert_pretraining.pdf (89% similarity)
+  [3] gpt3_few_shot.pdf (85% similarity)
+```
+
+---
+
+## 🚀 Quick Start - New Features
+
+### Installation
+
+```bash
+# Install additional dependencies
+pip install networkx plotly
+
+# Optional: Better visualization
+pip install pyvis
+
+# Run setup script
+bash setup_kg_rag.sh  # or setup_kg_rag.bat on Windows
+
+# Test everything
+python test_kg_rag_system.py
+```
+
+### Usage
+
+**Building Knowledge Graphs:**
+```
+1. Upload a research paper
+2. Click "✨ Research"
+3. Go to "🕸️ Knowledge Graph" tab
+4. Click "🔨 Build Knowledge Graph"
+5. Explore visualization, query entities, export
+```
+
+**Multi-Document RAG:**
+```
+1. Upload Paper 1 → Add to RAG
+2. Upload Paper 2 → Add to RAG
+3. Go to "📚 Advanced RAG" tab
+4. Ask: "Compare these papers on X"
+5. Get answer with sources + confidence
+6. Try document comparison or concept tracking
+```
+
+---
+
+## 🎯 Use Cases
+
+### Use Case 1: PhD Literature Review
+
+**Scenario:** Need to review 10 papers on transformers
+
+**Workflow:**
+1. Upload all 10 papers
+2. Build knowledge graph for each → Identify common entities
+3. Add all to RAG system
+4. Ask: "What are the main innovations across these papers?"
+5. Compare: "attention mechanisms"
+6. Track: "pre-training strategies"
+7. Export: Graphs + RAG report for thesis
+
+**Time Saved:** 10+ hours of manual analysis
+
+---
+
+### Use Case 2: Understanding Complex Paper
+
+**Scenario:** Dense 20-page paper on novel architecture
+
+**Workflow:**
+1. Upload paper
+2. Read summary for overview
+3. Build knowledge graph → Visualize all components
+4. Query graph: Find "dataset" → "model" → "results" path
+5. Use RAG: "Explain the methodology step by step"
+6. Chat: "What makes this approach novel?"
+7. Export: Graph for presentation
+
+**Time Saved:** 3-4 hours of manual diagramming
+
+---
+
+### Use Case 3: Comparing Approaches
+
+**Scenario:** Need to compare BERT vs GPT approaches
+
+**Workflow:**
+1. Upload BERT paper → Add to RAG
+2. Upload GPT-2 paper → Add to RAG
+3. Upload GPT-3 paper → Add to RAG
+4. RAG Compare: "pre-training strategies"
+5. Track concept: "language modeling"
+6. Build KG for each → Compare graph structures
+7. Export: Comparison report
+
+**Time Saved:** 5+ hours of manual comparison
+
+---
+
+## 📊 Feature Comparison Table
+
+| Feature | Basic Mode | Knowledge Graph | Advanced RAG |
+|---------|-----------|-----------------|--------------|
+| **Documents** | Single | Single | Multiple |
+| **Visualization** | Text only | Interactive graph | Text + sources |
+| **Entity Extraction** | No | Yes (auto) | No |
+| **Source Attribution** | No | N/A | Yes (detailed) |
+| **Confidence Score** | No | N/A | Yes (0-100%) |
+| **Comparison** | Manual | Visual graph | Automatic |
+| **Export** | Text | JSON/GraphML | Report |
+| **Best For** | Quick reads | Visual understanding | Multi-paper analysis |
+
+---
+
+## 🔧 Configuration
+
+### Knowledge Graph Settings
+
+```python
+# In knowledge_graph.py
+kg = KnowledgeGraphBuilder(model="llama3")
+
+# Customize entity patterns
+kg.patterns['methods'].append(r'\byour_custom_method\b')
+
+# Add relationship patterns
+kg.relation_patterns['custom_rel'] = [r'pattern1', r'pattern2']
+```
+
+### RAG Settings
+
+```python
+# In advanced_rag.py
+rag = AdvancedRAG(
+    model="llama3",
+    chunk_size=800,      # Adjust for context length
+    chunk_overlap=100    # Overlap between chunks
+)
+
+# Customize retrieval
+result = rag.answer_with_context(
+    query,
+    k=5,                 # Number of contexts
+    doc_ids=["doc1"]     # Specific documents
+)
+```
+
+---
+
+## 📦 Dependencies
+
+**New Requirements:**
+```bash
+# Core
+networkx>=3.0         # Graph construction and analysis
+plotly>=5.14.0        # Interactive visualization (fallback)
+
+# Optional
+pyvis>=0.3.2          # Enhanced interactive graphs
+```
+
+**Already Required:**
+```bash
+scikit-learn>=1.3.0   # For similarity calculations
+langchain>=0.1.0      # RAG framework
+faiss-cpu>=1.7.4      # Vector search
+```
+
+---
+
+## 🎓 Learning Resources
+
+### Documentation
+- **Full Guide**: `KNOWLEDGE_GRAPH_RAG_GUIDE.md` - Complete documentation
+- **Feature Showcase**: `FEATURE_SHOWCASE.md` - Visual examples
+- **Test Suite**: `test_kg_rag_system.py` - Verification tests
+
+### Quick Links
+- **NetworkX Tutorial**: Understanding graphs
+- **RAG Explanation**: How retrieval works
+- **FAISS Guide**: Vector similarity search
+
+### Example Notebooks
+- `examples/knowledge_graph_demo.ipynb` - Graph building tutorial
+- `examples/rag_multi_doc.ipynb` - Multi-document reasoning
+- `examples/combined_workflow.ipynb` - Using both features
+
+---
+
+## 🐛 Troubleshooting
+
+### Knowledge Graph Issues
+
+**No entities found:**
+```bash
+# Check text extraction
+python -c "from pdf_utils import extract_text_from_pdf; \
+           text = extract_text_from_pdf('paper.pdf'); \
+           print(len(text), text[:200])"
+
+# Verify patterns match your domain
+# Add custom patterns in knowledge_graph.py
+```
+
+**Visualization not showing:**
+```bash
+# Install PyVis
+pip install pyvis
+
+# Or use Plotly fallback
+# It will automatically use Plotly if PyVis fails
+```
+
+### RAG Issues
+
+**Low confidence scores:**
+```python
+# Increase chunk size
+rag = AdvancedRAG(chunk_size=1200)
+
+# Retrieve more contexts
+result = rag.answer_with_context(query, k=8)
+
+# Use more specific queries
+```
+
+**Wrong sources cited:**
+```python
+# Adjust chunk overlap
+rag = AdvancedRAG(chunk_overlap=200)
+
+# Filter documents
+result = rag.answer_with_context(query, doc_ids=["specific_doc"])
+```
+
+### Common Issues
+
+**Module not found:**
+```bash
+pip install networkx plotly pyvis scikit-learn
+```
+
+**Ollama not responding:**
+```bash
+# Check Ollama status
+curl http://localhost:11434/api/tags
+
+# Start Ollama
+ollama serve
+```
+
+**Memory issues:**
+```python
+# Clear session state
+st.session_state.clear()
+
+# Reduce documents in RAG
+# Process papers in batches
+```
+
+---
+
+## 🚀 Performance Tips
+
+### For Large Documents (>100 pages)
+
+**Knowledge Graphs:**
+- Focus on key sections (abstract, methodology)
+- Build separate graphs per section
+- Use subgraph extraction
+
+**RAG:**
+- Increase chunk size (1000-1500)
+- Reduce retrieval count (k=3-5)
+- Filter by document
+
+### For Many Documents (10+ papers)
+
+**Best Practices:**
+1. Add documents incrementally
+2. Use meaningful doc IDs (paper titles)
+3. Export graphs regularly
+4. Clear RAG between major sessions
+
+**Memory Management:**
+```python
+# Periodic cleanup
+if len(rag.documents) > 10:
+    rag.clear_documents()
+    gc.collect()
+```
+
+---
+
+## 🎉 What's Next?
+
+With Knowledge Graphs + Advanced RAG, Athena now provides:
+
+✅ **Visual Understanding** - See paper structure at a glance  
+✅ **Multi-Document Reasoning** - Compare and synthesize across papers  
+✅ **Source Attribution** - Know exactly where information comes from  
+✅ **Confidence Scoring** - Understand answer reliability  
+✅ **Export Capabilities** - Take insights to presentations/reports  
+
+**Next Planned Features:**
+- 🔄 Graph Diffing - Compare graphs from different papers
+- 📈 Temporal Analysis - Track concept evolution over time
+- 🧠 Graph Neural Networks - Advanced similarity
+- 🗄️ Neo4j Integration - Scale to 100+ papers
+- 🤖 LangGraph - Multi-agent research workflows
+
+---
+
+## 📞 Support
+
+**Getting Help:**
+
+1. **Check documentation**: `KNOWLEDGE_GRAPH_RAG_GUIDE.md`
+2. **Run tests**: `python test_kg_rag_system.py`
+3. **View examples**: `FEATURE_SHOWCASE.md`
+4. **Check status**: Sidebar in Athena app
+
+**Common Commands:**
+```bash
+# Test system
+python test_kg_rag_system.py
+
+# Verify Ollama
+ollama list
+
+# Check dependencies
+pip list | grep -E "networkx|plotly|scikit"
+
+# Start fresh
+rm -rf __pycache__ .streamlit
+```
+
+---
+
+## 📄 Files Added
+
+**New Files:**
+- `knowledge_graph.py` - Graph construction engine
+- `advanced_rag.py` - Multi-document RAG system
+- `kg_visualizer.py` - Visualization components
+- `test_kg_rag_system.py` - Comprehensive test suite
+- `setup_kg_rag.sh` / `.bat` - Setup scripts
+- `KNOWLEDGE_GRAPH_RAG_GUIDE.md` - Complete guide
+- `FEATURE_SHOWCASE.md` - Visual examples
+
+**Updated Files:**
+- `app.py` - Added new tabs and features
+- `requirements.txt` - Added networkx, plotly
+
+---
+
+## 🎓 Citation
+
+If you use Athena's Knowledge Graph or Advanced RAG features in your research:
+
+```bibtex
+@software{athena_kg_rag,
+  title={Athena: AI Research Assistant with Knowledge Graphs and Advanced RAG},
+  author={Your Name},
+  year={2025},
+  description={Local research assistant with entity extraction, 
+               knowledge graph visualization, and multi-document reasoning}
+}
+```
+
+---
+
+**🌟 Star the repo if you find these features helpful!**
+
+Built with ❤️ for researchers and students who want to understand papers deeply, not just read them.
+
 **Built with ❤️ for researchers and students**
 
 *Making research accessible, one paper at a time* 🚀

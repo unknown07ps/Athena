@@ -1,0 +1,21 @@
+# Additional requirements for Knowledge Graph + Advanced RAG features
+# Append these to your main requirements.txt or install separately
+
+# Knowledge Graph Construction
+networkx>=3.0  # Graph data structure and algorithms
+python-louvain>=0.16  # Community detection (optional)
+
+# Visualization
+plotly>=5.14.0  # Interactive graphs (fallback)
+pyvis>=0.3.2  # Network visualization (recommended for best UX)
+
+# Already in main requirements.txt (verify these are present):
+# scikit-learn>=1.3.0  # For cosine similarity in RAG
+# langchain>=0.1.0  # RAG framework
+# faiss-cpu>=1.7.4  # Vector search
+# sentence-transformers>=2.2.0  # Embeddings
+
+# Optional enhancements
+# neo4j>=5.0.0  # If you want Neo4j graph database
+# llama-index>=0.9.0  # Advanced RAG framework
+# langgraph>=0.0.1  # Multi-agent workflows
