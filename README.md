@@ -4,14 +4,15 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-red.svg)](https://streamlit.io)
 
-> A powerful local AI research assistant powered by Ollama and LangChain. Analyze research papers, build knowledge graphs, perform multi-document reasoning, and more—all running locally on your machine.
+> A powerful local AI research assistant powered by Ollama and LangChain. **Automatically fetch research papers from arXiv and Semantic Scholar**, analyze documents, build knowledge graphs, perform multi-document reasoning, and more—all running locally on your machine.
 
-![Athena Demo](https://via.placeholder.com/800x400?text=Athena+Demo+Screenshot)
+---
 
 ## ✨ Features
 
 ### 🎯 Core Research Tools
-- **📄 Document Summarization** - Intelligent multi-section summarization
+- **📚 Automated Paper Fetching** - Search and retrieve papers from arXiv and Semantic Scholar automatically
+- **📄 Document Summarization** - Intelligent multi-section summarization with source citations
 - **💬 Q&A System** - RAG-based question answering with context
 - **🔍 Semantic Search** - Find relevant sections using natural language
 - **🤖 Chat Interface** - Conversational AI with document context
@@ -20,14 +21,16 @@
 ### 🚀 Advanced Features
 - **🕸️ Knowledge Graph Construction** - Automatically extract and visualize entities, relationships, and concepts
 - **📚 Multi-Document RAG** - Cross-paper reasoning with source attribution and confidence scoring
-- **🎤 Voice Interface** - Speech-to-text and text-to-speech capabilities
-- **📈 Performance Metrics** - Track entity relationships and concept evolution
+- **🔗 Concept Tracking** - Trace how concepts evolve across different papers
+- **🎤 Voice Interface** - Speech-to-text and text-to-speech capabilities (optional)
+- **📈 Performance Metrics** - Track entity relationships and research trends
 
 ### 💡 Use Cases
-- 📚 **Literature Reviews** - Compare and synthesize multiple papers
-- 🔬 **Research Analysis** - Extract entities, methods, and results
-- 🎓 **Academic Writing** - Find relevant citations and connections
+- 📚 **Literature Reviews** - Automatically gather and synthesize relevant papers
+- 🔬 **Research Analysis** - Extract entities, methods, datasets, and results
+- 🎓 **Academic Writing** - Find relevant citations and conceptual connections
 - 🧪 **Paper Understanding** - Visual knowledge graphs and contextual Q&A
+- 🌐 **Research Discovery** - Stay updated with latest papers in your field
 
 ---
 
@@ -107,76 +110,131 @@ Access at: `http://localhost:8501`
 
 ---
 
-## 📖 Documentation
+## 📖 Core Dependencies
 
-### Quick Start Guides
-- [Installation Guide](docs/INSTALLATION.md) - Detailed setup instructions
-- [First Steps](docs/QUICKSTART.md) - Your first analysis
-- [Feature Overview](docs/FEATURES.md) - Complete feature documentation
+```txt
+# Core requirements
+streamlit>=1.28.0
+PyPDF2>=3.0.0
+langchain>=0.1.0
+langchain-community>=0.0.10
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.4
+requests>=2.31.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
 
-### Advanced Topics
-- [Knowledge Graphs](docs/KNOWLEDGE_GRAPH_GUIDE.md) - Entity extraction and visualization
-- [Multi-Document RAG](docs/ADVANCED_RAG_GUIDE.md) - Cross-paper reasoning
-- [Voice Interface](docs/VOICE_INTERFACE_GUIDE.md) - Speech interaction
-- [API Documentation](docs/API.md) - Programmatic usage
+# For paper fetching (NEW!)
+arxiv>=2.0.0
+semanticscholar>=0.3.0
 
-### Troubleshooting
-- [Common Issues](docs/TROUBLESHOOTING.md) - Solutions to frequent problems
-- [Performance Tuning](docs/PERFORMANCE.md) - Optimization tips
-- [FAQ](docs/FAQ.md) - Frequently asked questions
+# Advanced features (optional)
+networkx>=3.0              # Knowledge graphs
+plotly>=5.18.0            # Visualizations
+pyvis>=0.3.2              # Interactive graphs
+faster-whisper>=0.9.0     # Voice (STT)
+gtts>=2.4.0               # Voice (TTS)
+```
 
 ---
 
 ## 🎯 Usage Examples
 
-### 1. Analyze a Research Paper
+### 1. 📚 Fetch and Analyze Research Papers (NEW!)
+
+**Athena now automatically fetches papers from online sources!**
 
 ```bash
 # Start Athena
 streamlit run app.py
 
 # In the web interface:
+# 1. Enter research topic: "transformer attention mechanisms in NLP"
+# 2. Click "🔬 Research"
+# 3. Athena will:
+#    ✅ Search arXiv and Semantic Scholar
+#    ✅ Retrieve top 5 most relevant papers
+#    ✅ Analyze abstracts and metadata
+#    ✅ Generate comprehensive summary with citations
+#    ✅ Provide links to full papers and PDFs
+```
+
+**Example Topics to Try:**
+- "Recent advances in computer vision"
+- "Large language models for code generation"
+- "Graph neural networks applications"
+- "Federated learning privacy"
+- "Multimodal transformers"
+
+**What You Get:**
+- 📝 Synthesized overview of the topic
+- 🔬 Key findings from each paper
+- 🎯 Common themes and methodologies
+- 🚀 Recent advances and breakthroughs
+- 🔮 Challenges and future directions
+- 🔗 Direct links to papers and PDFs
+- 📊 Paper metadata (authors, year, citations)
+
+### 2. 📄 Analyze a Single Research Paper
+
+```bash
+# In the web interface:
 # 1. Upload your PDF
 # 2. Click "✨ Research"
 # 3. Explore different tabs:
-#    - Summary: High-level overview
-#    - Q&A: Ask specific questions
-#    - Search: Find relevant sections
-#    - Chat: Conversational exploration
+#    - 📄 Summary: High-level overview
+#    - 💬 Q&A: Ask specific questions
+#    - 🔍 Search: Find relevant sections
+#    - 🤖 Chat: Conversational exploration
 ```
 
-### 2. Build Knowledge Graph
+### 3. 🕸️ Build Knowledge Graph
 
 ```python
 # In Athena web interface:
-# 1. Upload research paper
+# 1. Upload/research a paper
 # 2. Go to "🕸️ Knowledge Graph" tab
-# 3. Click "Build Knowledge Graph"
+# 3. Click "🔨 Build Knowledge Graph"
 # 4. Explore:
-#    - Interactive visualization
-#    - Entity queries
-#    - Path finding
-#    - Export options
+#    - Interactive visualization (drag, zoom, hover)
+#    - Entity queries (search for concepts)
+#    - Path finding (connections between entities)
+#    - Export options (JSON, GraphML)
 ```
 
-### 3. Compare Multiple Papers
+**Extracted Entities:**
+- 📘 Papers and authors
+- 🔬 Methods and algorithms
+- 📊 Datasets and benchmarks
+- 📈 Metrics and results
+- 🏗️ Model architectures
+
+### 4. 📚 Multi-Document RAG & Comparison
 
 ```python
 # In Athena web interface:
-# 1. Go to "📚 Advanced RAG" tab
-# 2. Upload Paper 1 → "Add to RAG"
-# 3. Upload Paper 2 → "Add to RAG"
-# 4. Use comparison features:
-#    - Ask cross-paper questions
-#    - Compare methodologies
-#    - Track concepts across papers
+# 1. Research topic → get 5 papers automatically
+# 2. Go to "📚 Advanced RAG" tab
+# 3. Click "➕ Add Current Document to RAG"
+# 4. Repeat for multiple papers
+# 5. Use advanced features:
+#    ❓ Ask cross-paper questions
+#    📊 Compare methodologies
+#    🔗 Track concepts across papers
+#    🎯 Get answers with source attribution
 ```
 
-### 4. Voice Interaction (Optional)
+**Example Queries:**
+- "How do these papers approach attention mechanisms?"
+- "What datasets are commonly used?"
+- "Compare the performance metrics across papers"
+- "Which paper has the best results on ImageNet?"
+
+### 5. 🎤 Voice Interaction (Optional)
 
 ```python
 # Prerequisites:
-# pip install openai-whisper gtts
+# pip install faster-whisper gtts
 
 # In Athena web interface:
 # 1. Go to "🎤 Voice Assistant" tab
@@ -192,7 +250,8 @@ streamlit run app.py
 ```
 athena/
 ├── app.py                          # Main Streamlit application
-├── main.py                         # Research engine (online/offline)
+├── main.py                         # Research engine with paper fetching (UPDATED!)
+├── paper_fetcher.py               # Paper search from arXiv & Semantic Scholar (NEW!)
 ├── qa_engine.py                    # Q&A system with FAISS
 ├── semantic_search.py              # Semantic search engine
 ├── chat_engine.py                  # Conversational AI
@@ -222,6 +281,7 @@ athena/
 │
 ├── tests/                          # Test scripts
 │   ├── test_system.py             # Core system tests
+│   ├── test_paper_fetcher.py     # Paper fetching tests (NEW!)
 │   ├── test_kg_rag_system.py     # KG + RAG tests
 │   ├── test_comparison.py         # Document comparison tests
 │   └── test_voice.py              # Voice interface tests
@@ -246,7 +306,8 @@ athena/
 | RAM | 8 GB | 16 GB+ |
 | Storage | 5 GB | 10 GB+ |
 | CPU | 4 cores | 8+ cores |
-| GPU | Not required | NVIDIA GPU (optional, for faster processing) |
+| GPU | Not required | NVIDIA GPU (optional) |
+| Internet | For paper fetching | Stable connection |
 
 ### Ollama Models
 
@@ -265,6 +326,28 @@ ollama pull mistral
 ollama pull codellama
 ```
 
+### Paper Fetching Configuration
+
+**In `main.py`:**
+```python
+# Adjust maximum papers to fetch
+result = research_topic(
+    topic="your topic",
+    fetch_papers=True,
+    max_papers=5  # Change to 3, 10, etc.
+)
+```
+
+**In `paper_fetcher.py`:**
+```python
+# Configure search sources
+papers = fetcher.search_papers(
+    query=topic,
+    max_results=5,
+    sources=['arxiv', 'semantic_scholar']  # Add/remove sources
+)
+```
+
 ### Performance Tuning
 
 **For faster processing:**
@@ -272,6 +355,7 @@ ollama pull codellama
 # In qa_engine.py, semantic_search.py
 chunk_size = 1000  # Smaller = faster
 k = 2              # Fewer results = faster
+max_papers = 3     # Fewer papers = faster
 ```
 
 **For better quality:**
@@ -280,6 +364,7 @@ k = 2              # Fewer results = faster
 chunk_size = 3000  # Larger = more context
 k = 5              # More results = better coverage
 temperature = 0.1  # Lower = more focused
+max_papers = 10    # More papers = comprehensive
 ```
 
 ---
@@ -290,6 +375,9 @@ temperature = 0.1  # Lower = more focused
 ```bash
 # Core system test
 python tests/test_system.py
+
+# Paper fetching test (NEW!)
+python tests/test_paper_fetcher.py
 
 # Knowledge Graph + RAG test
 python tests/test_kg_rag_system.py
@@ -308,7 +396,74 @@ python check_setup.py
 
 # Check Ollama status
 curl http://localhost:11434/api/tags
+
+# Test paper fetching
+python -c "from paper_fetcher import PaperFetcher; f=PaperFetcher(); print(len(f.search_papers('transformer', 3)))"
 ```
+
+---
+
+## 🎓 How Paper Fetching Works
+
+### Architecture
+
+```
+User Input (Topic)
+        ↓
+┌───────────────────────┐
+│   main.py             │
+│   research_topic()    │
+└───────────┬───────────┘
+            ↓
+┌───────────────────────┐
+│  paper_fetcher.py     │
+│  PaperFetcher class   │
+└───────────┬───────────┘
+            ↓
+    ┌───────┴───────┐
+    ↓               ↓
+┌─────────┐   ┌──────────────┐
+│  arXiv  │   │ Semantic     │
+│   API   │   │ Scholar API  │
+└────┬────┘   └──────┬───────┘
+     │               │
+     └───────┬───────┘
+             ↓
+    ┌────────────────┐
+    │ Paper Metadata │
+    │ + Abstracts    │
+    └────────┬───────┘
+             ↓
+    ┌────────────────┐
+    │  Ollama LLM    │
+    │  (Analysis &   │
+    │  Synthesis)    │
+    └────────┬───────┘
+             ↓
+    ┌────────────────┐
+    │ Comprehensive  │
+    │ Summary with   │
+    │ Citations      │
+    └────────────────┘
+```
+
+### Search Strategy
+
+1. **Query Optimization**: Convert user topic to search-friendly query
+2. **Multi-Source Search**: 
+   - arXiv: Academic preprints (CS, Physics, Math, etc.)
+   - Semantic Scholar: Published papers with citation data
+3. **Deduplication**: Remove duplicate papers across sources
+4. **Ranking**: Sort by relevance and recency
+5. **Metadata Extraction**: Authors, year, citations, abstracts
+6. **Synthesis**: LLM analyzes and summarizes findings
+
+### Supported Sources
+
+| Source | Coverage | Features |
+|--------|----------|----------|
+| **arXiv** | 2M+ preprints | Latest research, free PDFs |
+| **Semantic Scholar** | 200M+ papers | Citation counts, metadata |
 
 ---
 
@@ -336,11 +491,13 @@ python -m pytest tests/
 ```
 
 ### Areas for Contribution
-- 🌐 Additional LLM providers (OpenAI, Anthropic)
-- 🔍 OCR support for scanned PDFs
-- 🌍 Multi-language support
+- 🌐 Additional paper sources (PubMed, IEEE, ACM)
+- 🌍 Additional LLM providers (OpenAI, Anthropic, Claude)
+- 📄 OCR support for scanned PDFs
+- 🌐 Multi-language support
 - 📊 Enhanced visualizations
 - 🧪 Additional test coverage
+- 📖 Improved documentation
 
 ---
 
@@ -361,6 +518,8 @@ Built with these amazing open-source projects:
 - [Sentence Transformers](https://www.sbert.net/) - Embeddings
 - [NetworkX](https://networkx.org/) - Graph analysis
 - [Plotly](https://plotly.com/) - Interactive visualizations
+- [arXiv API](https://arxiv.org/help/api) - Academic paper search
+- [Semantic Scholar API](https://www.semanticscholar.org/product/api) - Citation data
 
 ---
 
@@ -374,18 +533,33 @@ Built with these amazing open-source projects:
 
 ## 🗺️ Roadmap
 
-### v2.0 (Coming Soon)
+### v2.0 (Current) ✅
+- [x] Automated paper fetching from arXiv
+- [x] Semantic Scholar integration
+- [x] Multi-document RAG
+- [x] Knowledge graph visualization
+- [x] Document comparison
+
+### v2.1 (In Progress)
+- [ ] Additional sources (PubMed, IEEE, ACM Digital Library)
+- [ ] Citation network visualization
+- [ ] Research trend analysis
+- [ ] Collaborative features (shared workspaces)
+- [ ] Export to reference managers (Zotero, Mendeley)
+
+### v2.2 (Planned)
 - [ ] Neo4j integration for large knowledge graphs
 - [ ] LangGraph multi-agent workflows
-- [ ] Enhanced document comparison
 - [ ] Cloud deployment options
 - [ ] API server mode
+- [ ] Custom LLM fine-tuning support
 
-### v2.1 (Planned)
-- [ ] Graph neural networks for similarity
+### v3.0 (Future)
+- [ ] Graph neural networks for paper similarity
 - [ ] Temporal concept tracking
-- [ ] Citation network analysis
-- [ ] Collaborative features
+- [ ] Automated literature review generation
+- [ ] Research gap identification
+- [ ] Hypothesis generation
 
 ---
 
@@ -398,6 +572,18 @@ Built with these amazing open-source projects:
 
 ---
 
+## 🌟 Recent Updates
+
+### v2.0 - Paper Fetching Release (Latest)
+- ✨ **NEW:** Automated paper fetching from arXiv and Semantic Scholar
+- ✨ **NEW:** Comprehensive research synthesis with source citations
+- ✨ **NEW:** Direct links to papers and PDFs
+- 🔧 Improved multi-document RAG performance
+- 🔧 Enhanced knowledge graph entity extraction
+- 🐛 Bug fixes and stability improvements
+
+---
+
 **Built with ❤️ for researchers and students**
 
 *Making research accessible, one paper at a time* 🚀
@@ -407,3 +593,19 @@ Built with these amazing open-source projects:
 ## 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=yourusername/athena&type=Date)](https://star-history.com/#yourusername/athena&Date)
+
+---
+
+## 💡 Quick Tips
+
+1. **Start with a broad topic** to get an overview, then dive deeper
+2. **Use Knowledge Graphs** to visualize connections between concepts
+3. **Add multiple papers to RAG** for cross-paper analysis
+4. **Adjust `max_papers`** based on your needs (3-10 recommended)
+5. **Save interesting papers** by downloading the summary with citations
+6. **Combine features**: Fetch papers → Build KG → Ask questions → Compare
+7. **Check paper citations** to assess impact and relevance
+
+---
+
+**Questions? Open an issue or start a discussion!** 💬
