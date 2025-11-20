@@ -1,9 +1,5 @@
 # Athena - AI Research Assistant
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-red.svg)](https://streamlit.io)
-
 A powerful local AI research assistant powered by Ollama and LangChain. Automatically fetch research papers from arXiv and Semantic Scholar, analyze documents, build knowledge graphs, perform multi-document reasoning, and more—all running locally on your machine.
 
 ---
@@ -560,15 +556,6 @@ Built with these amazing open-source projects:
 - Automated literature review generation
 - Research gap identification
 - Hypothesis generation
-
----
-
-## Stats
-
-![GitHub stars](https://img.shields.io/github/stars/yourusername/athena?style=social)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/athena?style=social)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/athena)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/athena)
 
 ---
 
