@@ -5,31 +5,37 @@ class ThemeManager:
     
     LIGHT_THEME = {
         'name': 'light',
-        
+
         # Background + text
-        'background': '#F5F7F8',
-        'primary_text': '#262626',
-        'secondary_text': '#5A6970',
-        
-        # Blue accents from logo
-        'accent': '#0D3B66',             # deep blue (logo base)
-        'accent_secondary': '#00B5E2',   # cyan circuit blue
-        
+        'background': '#F7FAFC',        
+        'primary_text': '#1A2A33',      
+        'secondary_text': '#4B5F6A',    
+
+        # Logo-matching accents
+        'accent': '#0D3B66',            
+        'accent_secondary': '#1BA9F5',  
+
         'logo': 'assets/athena_logo_light.png',
-        
+
         # UI boxes
         'card_bg': '#FFFFFF',
-        'border': '#D0D7DE',
-        'input_bg': '#FFFFFF',
-        'input_border': '#A9B7C5',
-        'hover_bg': '#E6F4FF',
-        
+        'border': '#C7D7E5',            
+        'input_bg': '#FFFFFF',          
+        'input_border': '#8BB6D9',      
+        'hover_bg': '#E9F4FF',          
+
+        # Buttons 
+        'button_bg': '#0D3B66',         
+        'button_text': '#FFFFFF',
+
         # Additional UI elements
         'success_color': '#06D6A0',
         'error_color': '#EF476F',
         'warning_color': '#FFB627',
-        'info_color': '#00B5E2',
-    }
+        'info_color': '#1BA9F5',
+}
+
+
     
     DARK_THEME = {
         'name': 'dark',

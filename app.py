@@ -96,7 +96,7 @@ with col_center:
         st.markdown(f"""
             <div style='padding-left: 1rem;'>
                 <h1 style='color: {theme['accent']}; font-size: 3rem; margin: 0 0 0.5rem 0; line-height: 1;'>Athena</h1>
-                <p style='color: {theme['secondary_text']}; font-size: 1.15rem; font-style: italic; margin: 0;'>Local AI Research Assistant powered by Ollama</p>
+                <p style='color: {theme['secondary_text']}; font-size: 1.15rem; font-style: italic; margin: 0;'>The Goddess of Wisdom. The Engine of Insight.</p>
             </div>
         """, unsafe_allow_html=True)
 
@@ -659,4 +659,4 @@ RECOMMENDATIONS
 
 # Footer
 st.markdown("---")
-st.caption("Athena © 2025 · Built with Streamlit and Ollama · Developed by Sagar Prajapati")
+st.caption("Athena © 2025 · Developed by Sagar Prajapati")

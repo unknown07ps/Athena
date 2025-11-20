@@ -99,6 +99,7 @@ def get_themed_style():
     ::-webkit-scrollbar-track {{
         background: {background};
     }}
+    
 
     </style>
     """
