@@ -1,30 +1,129 @@
-# .dockerignore - Docker Ignore File
+# .dockerignore - Optimize Docker Build
 
-__pycache__
+# Python cache
+__pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+
+# Virtual environments
 venv/
 env/
 ENV/
+env.bak/
+venv.bak/
+
+# IDEs
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
 .DS_Store
-*.log
+
+# Git
 .git/
 .gitignore
-README.md
+.gitattributes
+
+# Documentation (not needed in container)
 docs/
+*.md
+!README.md
+
+# Tests (optional - remove this line to include tests)
 tests/
-.pytest_cache/
-htmlcov/
-.coverage
-*.pdf
+test_*.py
+*_test.py
+
+# Build artifacts
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Temporary files
+*.tmp
+temp_*/
+*.log
+logs/
+
+# Data files (will be mounted as volumes)
 data/
 cache/
-logs/
-dist/
-build/
-*.egg-info/
+*.pdf
+
+# Audio files (generated at runtime)
+*.mp3
+*.wav
+knowledge_graph.html
+chat_history.txt
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Coverage and testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+.hypothesis/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Docker files (no need to copy into image)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Setup scripts (not needed in container)
+setup.sh
+setup.bat
+setup_*.sh
+setup_*.bat
+
+# Requirements (will be copied separately)
+# requirements*.txt - Keep these!
+
+# Pre-commit
+.pre-commit-config.yaml
+
+# Node modules (if any)
+node_modules/
+
+# Large model files (if any)
+*.bin
+*.pt
+*.pth
+models/

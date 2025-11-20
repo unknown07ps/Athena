@@ -1,32 +1,87 @@
-# Dockerfile - Docker Container Configuration
+# Dockerfile - Complete Athena AI Research Assistant
 
 FROM python:3.10-slim
 
-LABEL maintainer="your.email@example.com"
-LABEL description="Athena AI Research Assistant"
+LABEL maintainer="sagar.prajapati@example.com"
+LABEL description="Athena AI Research Assistant - Complete with all features"
+LABEL version="2.0"
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    DEBIAN_FRONTEND=noninteractive
 
 # Set working directory
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Core utilities
     curl \
+    wget \
     git \
-    && rm -rf /var/lib/apt/lists/*
+    # Build tools for Python packages
+    build-essential \
+    gcc \
+    g++ \
+    # Audio processing (for voice features)
+    ffmpeg \
+    libsndfile1 \
+    # Network tools
+    net-tools \
+    # Cleanup
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
-# Copy requirements
+# Copy requirements files
 COPY requirements.txt requirements_optional.txt ./
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
+    # Core dependencies
     pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir -r requirements_optional.txt
+    # Optional features (Knowledge Graph, Advanced RAG, Voice)
+    pip install --no-cache-dir -r requirements_optional.txt && \
+    # Specific version for compatibility
+    pip install --no-cache-dir \
+        faster-whisper \
+        langchain-huggingface \
+        huggingface-hub
 
 # Copy application code
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p data cache logs
+RUN mkdir -p \
+    data \
+    cache \
+    logs \
+    assets \
+    tools \
+    tests \
+    .streamlit
+
+# Create Streamlit config
+RUN echo '[server]\n\
+headless = true\n\
+address = "0.0.0.0"\n\
+port = 8501\n\
+enableCORS = false\n\
+enableXsrfProtection = false\n\
+\n\
+[browser]\n\
+gatherUsageStats = false\n\
+serverAddress = "0.0.0.0"\n\
+serverPort = 8501\n\
+\n\
+[theme]\n\
+base = "dark"\n\
+primaryColor = "#3DCCC7"\n\
+backgroundColor = "#0A191C"\n\
+secondaryBackgroundColor = "#142B30"\n\
+textColor = "#DCEFF0"' > .streamlit/config.toml
 
 # Expose Streamlit port
 EXPOSE 8501
@@ -35,6 +90,13 @@ EXPOSE 8501
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8501/_stcore/health || exit 1
 
-# Run application
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+# Set permissions
+RUN chmod -R 755 /app
 
+# Run application
+CMD ["streamlit", "run", "app.py", \
+     "--server.port=8501", \
+     "--server.address=0.0.0.0", \
+     "--server.headless=true", \
+     "--browser.serverAddress=0.0.0.0", \
+     "--browser.serverPort=8501"]

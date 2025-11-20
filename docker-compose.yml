@@ -1,8 +1,55 @@
-# docker-compose.yml - Docker Compose Configuration
+# docker-compose.yml - Complete Athena Stack with Ollama
 
 version: '3.8'
 
 services:
+  # Ollama service for local LLM
+  ollama:
+    image: ollama/ollama:latest
+    container_name: athena-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    # Uncomment for GPU support (NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+  
+  # Ollama model initialization
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: athena-ollama-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    volumes:
+      - ollama-data:/root/.ollama
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      echo 'Waiting for Ollama to be ready...';
+      sleep 10;
+      echo 'Pulling llama3 model...';
+      ollama pull llama3;
+      echo 'Model ready!';
+      "
+    restart: "no"
+  
+  # Athena application
   athena:
     build:
       context: .
@@ -11,30 +58,59 @@ services:
     ports:
       - "8501:8501"
     environment:
+      # Ollama configuration
       - OLLAMA_URL=http://ollama:11434
       - MODEL_NAME=llama3
+      
+      # Application settings
+      - CHUNK_SIZE=2000
+      - CHUNK_OVERLAP=200
+      - MAX_SEARCH_RESULTS=5
+      - SEMANTIC_SEARCH_K=10
+      
+      # Performance
+      - ENABLE_CACHE=true
+      - CACHE_DIR=/app/cache
+      
+      # Theme
+      - DEFAULT_THEME=dark
     volumes:
+      # Mount for persistent data
       - ./data:/app/data
-      - ./cache:/app/.cache
+      - ./cache:/app/cache
+      - ./logs:/app/logs
+      
+      # Mount assets (logos, etc.)
+      - ./assets:/app/assets
+      
+      # Optional: Mount code for development
+      # - .:/app
     depends_on:
-      - ollama
+      ollama:
+        condition: service_healthy
+      ollama-init:
+        condition: service_completed_successfully
     restart: unless-stopped
-
-  ollama:
-    image: ollama/ollama:latest
-    container_name: athena-ollama
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama-data:/root/.ollama
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Resource limits (adjust based on your system)
     deploy:
       resources:
+        limits:
+          cpus: '4.0'
+          memory: 8G
         reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+          cpus: '2.0'
+          memory: 4G
 
 volumes:
   ollama-data:
+    driver: local
+
+networks:
+  default:
+    name: athena-network
