@@ -1,6 +1,3 @@
-# voice_engine.py - Windows-compatible Voice Engine
-# Uses: faster-whisper (no FFmpeg needed) + gTTS
-
 from faster_whisper import WhisperModel
 from gtts import gTTS
 import tempfile

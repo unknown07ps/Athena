@@ -1,7 +1,3 @@
-# ============================================
-# semantic_search.py - Updated with tracking
-# ============================================
-
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter

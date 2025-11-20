@@ -1,5 +1,3 @@
-# voice_interface.py - Robust Voice Interface (Theme-aware, no icons)
-
 import streamlit as st
 from voice_engine import AthenaVoice
 import tempfile

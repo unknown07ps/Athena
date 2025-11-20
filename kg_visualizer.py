@@ -1,4 +1,3 @@
-# kg_visualizer.py - Interactive Knowledge Graph Visualization (Theme-aware, no icons)
 
 import streamlit as st
 import streamlit.components.v1 as components

@@ -1,4 +1,4 @@
-# tracker_integration.py - Centralized tracker management for Athena
+
 """
 This module provides a centralized way to access the agent tracker
 across all modules in the Athena application.

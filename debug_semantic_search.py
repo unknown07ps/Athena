@@ -6,7 +6,7 @@ Run this to see what's happening with your PDF
 
 import PyPDF2
 from semantic_search import build_semantic_index, search_semantic
-from pdf_utils import extract_text_from_pdf  # ✅ NEW IMPORT
+from pdf_utils import extract_text_from_pdf 
 
 # Test with your resume
 pdf_path = "Sagar Prajapati Resume Final Nov .pdf (2).pdf"

@@ -1,4 +1,3 @@
-# themed_style.py
 
 from theme_manager import ThemeManager
 

@@ -1,4 +1,3 @@
-# document_comparison.py - Deep Insights Document Comparison
 
 import requests
 from typing import Dict, List, Tuple, Set

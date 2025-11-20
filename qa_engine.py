@@ -1,6 +1,3 @@
-# ============================================
-# qa_engine.py - Updated with agent tracking
-# ============================================
 
 import streamlit as st
 import requests

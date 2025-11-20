@@ -1,5 +1,3 @@
-# paper_fetcher.py - Fetch research papers from multiple sources
-
 import requests
 from typing import List, Dict, Optional
 from dataclasses import dataclass
